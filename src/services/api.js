@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+// Cambia 'http://localhost:8000/api' por el dominio de Railway
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api', // Asegúrate de que coincida con tu backend
+    baseURL: 'https://tu-proyecto.up.railway.app/api', // Usa el dominio de Railway
 });
 
 // Hoteles
