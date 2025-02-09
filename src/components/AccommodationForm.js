@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 const AccommodationForm = ({ onAccommodationCreated }) => {
     const [accommodation, setAccommodation] = useState({
@@ -15,8 +16,8 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const hotelsResponse = await axios.get('backend-decameron-production.up.railway.app/api/hotels');
-                const roomTypesResponse = await axios.get('backend-decameron-production.up.railway.app/api/room-types');
+                const hotelsResponse = await axios.get('https://tu-proyecto.up.railway.app/api/hotels');
+                const roomTypesResponse = await axios.get('https://tu-proyecto.up.railway.app/api/room-types');
                 setHotels(hotelsResponse.data);
                 setRoomTypes(roomTypesResponse.data);
             } catch (error) {
@@ -29,43 +30,35 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
     // Validar que el valor sea un número positivo
     const handlePositiveNumberChange = (e, field) => {
         const value = e.target.value;
-
-        // Permitir solo números positivos (incluyendo vacío para limpiar el campo)
-        if (/^\d*$/.test(value)) {
+        if (/^\d+$/.test(value) && parseInt(value, 10) > 0) {
             setAccommodation({ ...accommodation, [field]: value });
+        } else if (value === '') {
+            setAccommodation({ ...accommodation, [field]: '' });
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Validar que la cantidad no sea negativa ni vacía
         if (accommodation.quantity <= 0 || accommodation.quantity === '') {
             alert('La cantidad debe ser un número positivo mayor a cero.');
             return;
         }
-
         try {
-            await axios.post('backend-decameron-production.up.railway.app/api/accommodations', accommodation);
+            await axios.post('https://tu-proyecto.up.railway.app/api/accommodations', accommodation);
             alert('Acomodación creada exitosamente');
             setAccommodation({ hotel_id: '', room_type_id: '', type: '', quantity: '' });
-
-            // Refrescar los datos después de guardar
             if (onAccommodationCreated) {
                 onAccommodationCreated();
             }
         } catch (error) {
-            if (error.response && error.response.data && error.response.data.errors) {
+            if (error.response?.data?.errors) {
                 const errors = error.response.data.errors;
-
-                // Construir un mensaje de error detallado
                 let errorMessage = 'Errores de validación:\n';
                 for (const field in errors) {
                     errors[field].forEach((message) => {
                         errorMessage += `- ${message}\n`;
                     });
                 }
-
                 alert(errorMessage);
             } else {
                 console.error('Error creating accommodation:', error);
@@ -98,7 +91,6 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
                         ))}
                     </select>
                 </div>
-
                 {/* Tipo de Habitación */}
                 <div className="col-md-6">
                     <label htmlFor="roomType" className="form-label">
@@ -119,7 +111,6 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
                         ))}
                     </select>
                 </div>
-
                 {/* Tipo de Acomodación */}
                 <div className="col-md-6">
                     <label htmlFor="type" className="form-label">
@@ -154,7 +145,6 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
                         )}
                     </select>
                 </div>
-
                 {/* Cantidad */}
                 <div className="col-md-6">
                     <label htmlFor="quantity" className="form-label">
@@ -167,11 +157,10 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
                         value={accommodation.quantity}
                         onChange={(e) => handlePositiveNumberChange(e, 'quantity')}
                         className="form-control"
-                        min="1" // Asegura que el valor mínimo sea 1
+                        min="1"
                         required
                     />
                 </div>
-
                 {/* Botón de Guardar */}
                 <div className="col-12 text-center">
                     <button type="submit" className="btn btn-primary">
@@ -181,6 +170,10 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
             </form>
         </div>
     );
+};
+
+AccommodationForm.propTypes = {
+    onAccommodationCreated: PropTypes.func,
 };
 
 export default AccommodationForm;
