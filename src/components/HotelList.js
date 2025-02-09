@@ -8,7 +8,7 @@ const HotelList = () => {
     // Función para cargar los hoteles
     const fetchHotels = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/hotels');
+            const response = await axios.get('backend-decameron-production.up.railway.app/api/hotels');
             setHotels(response.data);
         } catch (error) {
             console.error('Error fetching hotels:', error);

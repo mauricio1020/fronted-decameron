@@ -8,7 +8,7 @@ const AccommodationList = () => {
     // Función para cargar las acomodaciones
     const fetchAccommodations = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/accommodations');
+            const response = await axios.get('backend-decameron-production.up.railway.app/api/accommodations');
             setAccommodations(response.data);
         } catch (error) {
             console.error('Error fetching accommodations:', error);
