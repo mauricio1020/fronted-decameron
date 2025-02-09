@@ -1,6 +1,5 @@
 import React from 'react';
 import HotelList from '../components/HotelList';
-import HotelForm from '../components/HotelForm';
 
 const Hotels = () => {
     return (

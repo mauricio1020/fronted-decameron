@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 const HotelForm = ({ onHotelCreated }) => {
     const [hotel, setHotel] = useState({
@@ -17,7 +18,7 @@ const HotelForm = ({ onHotelCreated }) => {
         if (!/^[a-zA-Z\s]+$/.test(hotel.name)) newErrors.name = 'El nombre solo debe contener letras.';
         if (!/^[a-zA-Z\s]+$/.test(hotel.city)) newErrors.city = 'La ciudad solo debe contener letras.';
         if (!/^\d{8}-\d$/.test(hotel.nit)) newErrors.nit = 'El NIT debe tener el formato: 12345678-9.';
-        if (!/^\d+$/.test(hotel.number_of_rooms) || parseInt(hotel.number_of_rooms) <= 0) {
+        if (!/^\d+$/.test(hotel.number_of_rooms) || parseInt(hotel.number_of_rooms, 10) <= 0) {
             newErrors.number_of_rooms = 'El número de habitaciones debe ser un número positivo mayor que cero.';
         }
         setErrors(newErrors);
@@ -39,17 +40,14 @@ const HotelForm = ({ onHotelCreated }) => {
                 onHotelCreated();
             }
         } catch (error) {
-            if (error.response && error.response.data && error.response.data.errors) {
+            if (error.response?.data?.errors) {
                 const errors = error.response.data.errors;
-
-                // Construir un mensaje de error detallado
                 let errorMessage = 'Errores de validación:\n';
                 for (const field in errors) {
                     errors[field].forEach((message) => {
                         errorMessage += `- ${message}\n`;
                     });
                 }
-
                 alert(errorMessage);
             } else {
                 console.error('Error creando hotel:', error);
@@ -58,15 +56,26 @@ const HotelForm = ({ onHotelCreated }) => {
         }
     };
 
-    const handleInputChange = (e, regex) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
 
-        // Permitir solo números positivos para campos numéricos
+        // Validar campos numéricos
         if (name === 'number_of_rooms') {
-            if (/^\d*$/.test(value) && parseInt(value) >= 0) {
+            if (/^\d*$/.test(value) && parseInt(value, 10) >= 0) {
                 setHotel({ ...hotel, [name]: value });
             }
-        } else if (regex.test(value) || value === '') {
+            return;
+        }
+
+        // Validar otros campos con expresiones regulares
+        const regexMap = {
+            name: /^[a-zA-Z\s]*$/,
+            city: /^[a-zA-Z\s]*$/,
+            nit: /^\d{0,8}-?\d?$/,
+            address: /.*/, // Permitir cualquier valor para la dirección
+        };
+
+        if (regexMap[name]?.test(value) || value === '') {
             setHotel({ ...hotel, [name]: value });
         }
     };
@@ -96,7 +105,7 @@ const HotelForm = ({ onHotelCreated }) => {
                             id="name"
                             name="name"
                             value={hotel.name}
-                            onChange={(e) => handleInputChange(e, /^[a-zA-Z\s]*$/)}
+                            onChange={handleInputChange}
                             className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                             required
                         />
@@ -113,7 +122,7 @@ const HotelForm = ({ onHotelCreated }) => {
                             id="address"
                             name="address"
                             value={hotel.address}
-                            onChange={(e) => setHotel({ ...hotel, address: e.target.value })}
+                            onChange={handleInputChange}
                             className="form-control"
                             required
                         />
@@ -129,7 +138,7 @@ const HotelForm = ({ onHotelCreated }) => {
                             id="city"
                             name="city"
                             value={hotel.city}
-                            onChange={(e) => handleInputChange(e, /^[a-zA-Z\s]*$/)}
+                            onChange={handleInputChange}
                             className={`form-control ${errors.city ? 'is-invalid' : ''}`}
                             required
                         />
@@ -146,7 +155,7 @@ const HotelForm = ({ onHotelCreated }) => {
                             id="nit"
                             name="nit"
                             value={hotel.nit}
-                            onChange={(e) => handleInputChange(e, /^\d{0,8}-?\d?$/)}
+                            onChange={handleInputChange}
                             className={`form-control ${errors.nit ? 'is-invalid' : ''}`}
                             placeholder="Ejemplo: 12345678-9"
                             required
@@ -164,7 +173,7 @@ const HotelForm = ({ onHotelCreated }) => {
                             id="number_of_rooms"
                             name="number_of_rooms"
                             value={hotel.number_of_rooms}
-                            onChange={(e) => handleInputChange(e, /^\d*$/)} // Solo números positivos
+                            onChange={handleInputChange}
                             className={`form-control ${errors.number_of_rooms ? 'is-invalid' : ''}`}
                             required
                         />
@@ -183,6 +192,10 @@ const HotelForm = ({ onHotelCreated }) => {
             </div>
         </div>
     );
+};
+
+HotelForm.propTypes = {
+    onHotelCreated: PropTypes.func,
 };
 
 export default HotelForm;
