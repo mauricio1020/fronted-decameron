@@ -42,12 +42,13 @@ const HotelForm = ({ onHotelCreated }) => {
         } catch (error) {
             if (error.response?.data?.errors) {
                 const errors = error.response.data.errors;
+
+                // Construir un mensaje de error detallado
                 let errorMessage = 'Errores de validación:\n';
-                for (const field in errors) {
-                    errors[field].forEach((message) => {
-                        errorMessage += `- ${message}\n`;
-                    });
-                }
+                Object.keys(errors).forEach((field) => {
+                    errorMessage += errors[field].map((message) => `- ${message}`).join('\n') + '\n';
+                });
+
                 alert(errorMessage);
             } else {
                 console.error('Error creando hotel:', error);
