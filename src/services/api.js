@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Cambia 'http://localhost:8000/api' por el dominio de Railway
 const api = axios.create({
-    baseURL: 'https://backend-decameron-production.up.railway.app//api', // Usa el dominio de Railway
+    baseURL: 'https://backend-decameron-production.up.railway.app/api', // Usa el dominio de Railway
 });
 
 // Hoteles
