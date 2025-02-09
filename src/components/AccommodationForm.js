@@ -16,8 +16,8 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const hotelsResponse = await axios.get('https://tu-proyecto.up.railway.app/api/hotels');
-                const roomTypesResponse = await axios.get('https://tu-proyecto.up.railway.app/api/room-types');
+                const hotelsResponse = await axios.get('https://backend-decameron-production.up.railway.app/api/hotels');
+                const roomTypesResponse = await axios.get('https://backend-decameron-production.up.railway.app/api/room-types');
                 setHotels(hotelsResponse.data);
                 setRoomTypes(roomTypesResponse.data);
             } catch (error) {
@@ -44,7 +44,7 @@ const AccommodationForm = ({ onAccommodationCreated }) => {
             return;
         }
         try {
-            await axios.post('https://tu-proyecto.up.railway.app/api/accommodations', accommodation);
+            await axios.post('https://backend-decameron-production.up.railway.app/api/accommodations', accommodation);
             alert('Acomodación creada exitosamente');
             setAccommodation({ hotel_id: '', room_type_id: '', type: '', quantity: '' });
             if (onAccommodationCreated) {

@@ -30,7 +30,7 @@ const HotelForm = ({ onHotelCreated }) => {
         if (!validateFields()) return;
 
         try {
-            await axios.post('https://tu-proyecto.up.railway.app/api/hotels', hotel);
+            await axios.post('https://backend-decameron-production.up.railway.app/api/hotels', hotel);
             alert('Hotel creado exitosamente');
             setHotel({ name: '', address: '', city: '', nit: '', number_of_rooms: '' });
             setErrors({});
